@@ -13,14 +13,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'  # Caches dependencies for faster runs
-
       - name: Install Dependencies
-        run: npm ci  # Clean install for more reliable builds
+        run: npm install  # Clean install for more reliable builds
 
       - name: Run Build
         run: npm run dev  # Changed to standard build script
