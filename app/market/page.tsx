@@ -220,43 +220,7 @@ export default function Component() {
     <div className="bg-[#121212] font-inter text-white min-h-screen p-4 tracking-widest">
       <div className="max-w-7xl mx-auto">
          <Appbar  TrueButton={false}></Appbar>
-        {/* <div className="relative bg-[#1c1c1c] rounded-xl overflow-hidden mb-6 pt-32">
-          <div className="absolute inset-0">
-            <Image
-              src="/backpack-smoke.webp"
-              alt="Background"
-              layout="fill"
-              objectFit="cover"
-              className="opacity-50"
-            />
-          </div>
-          <div className="relative p-8">
-            <div className="flex justify-between items-center mb-4">
-              <ChevronLeft className="text-neutral-400  cursor-pointer" />
-              <ChevronRight className="text-neutral-400 cursor-pointer" />
-            </div>
-            <h1 className="text-4xl font-bold mb-2">
-              US Election Prediction Markets
-            </h1>
-            <p className="text-neutral-400 mb-4">
-              Predict the outcome by trading the outcome tokens.
-            </p>
-            <div className="flex space-x-4">
-              <button className="bg-white text-black px-4 py-2 rounded-full font-semibold">
-                Trade TRUMPWIN
-              </button>
-              <button className="bg-white text-black px-4 py-2 rounded-full font-semibold">
-                Trade HARRISWIN
-              </button>
-            </div>
-            <div className="flex justify-center mt-4 space-x-2">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-              <div className="w-2 h-2 bg-neutral-600 rounded-full"></div>
-              <div className="w-2 h-2 bg-neutral-600 rounded-full"></div>
-              <div className="w-2 h-2 bg-neutral-600 rounded-full"></div>
-            </div>
-          </div>
-        </div> */}
+       
         <Carousel />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
