@@ -1,6 +1,6 @@
-The Exchange Platform is a high-performance trading system designed for real-time order execution with low latency. Built with a modular, event-driven architecture, the platform efficiently processes user orders, executes trades, and delivers live market updates. Its robust design ensures scalability and reliability, even under heavy load. Screenshot 2025-02-12 at 4 24 25 PM
+The Exchange Platform is a high-performance trading system designed for real-time order execution with low latency. Built with a modular, event-driven architecture, the platform efficiently processes user orders, executes trades, and delivers live market updates. Its robust design ensures scalability and reliability, even under heavy load. ****Screenshot 2025-02-12 at 4 24 25 PM
 
-Screenshot 2025-02-12 at 6 27 19 PM
+****Screenshot 2025-02-12 at 6 27 19 PM
 Tech Stack
 Frontend:
 Next.js & React: For dynamic, server-rendered interfaces.
