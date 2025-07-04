@@ -2,19 +2,29 @@ name: CI Build Pipeline
 
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      - name: ⬇️ Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: cd app && npm install
+      - name: ⎔ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - name: Run Build
-        run: cd app && npm run build
+      - name: 📦 Install Dependencies
+        run: |
+          cd app
+          npm ci --ignore-scripts=false
+
+      - name: 🔨 Build Project
+        run: |
+          cd app
+          npm run build
