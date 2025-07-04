@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { KLine } from '@/app/utils/types';
+
 
 const BASE_URL = 'https://api.backpack.exchange/api/v1';
 

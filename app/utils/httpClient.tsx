@@ -1,7 +1,7 @@
 
 import axios from "axios";
-import { Depth ,Ticker,KLine, marketData} from "./types";
-import { symbol } from "zod";
+import { Ticker,KLine, marketData} from "./types";
+
 
 
 

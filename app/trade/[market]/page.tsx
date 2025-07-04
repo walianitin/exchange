@@ -5,7 +5,7 @@ import { TradeView } from "@/components/ui/Tradeview";
 import Appbar from "@/components/ui/Appbar";
 import {SwapUI} from "@/components/ui/SwapUi";
 import { MarketBar } from "@/components/ui/MarketBar";
-import { SrvRecord } from "dns";
+
 
 export default function Page() {
     const { market } = useParams();

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import { KLine } from '@/app/utils/types';
-import { init } from 'next/dist/compiled/webpack/webpack';
+
 
 const BASE_URL = 'https://api.backpack.exchange/api/v1';
 
