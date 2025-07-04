@@ -21,7 +21,7 @@ export function TradeView({ market}:{ market: string }) {
       const endTime=String(Math.floor(new Date().getTime() / 1000));
       klineData = await getKlines({market,interval,startTime , endTime }); 
 
-    } catch (e) { }
+    } catch (e) { return e}
 
     if (chartRef) {
       if (chartManagerRef.current) {

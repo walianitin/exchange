@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, number } from "framer-motion";
 import {
   ColorType,
   createChart,
@@ -14,11 +14,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { CombineData, CombinedCryptoData } from "../utils/combine-data";
+import { useEffect,useRef,useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Appbar from "@/components/ui/Appbar";
-import { any } from "zod";
+
 
 export interface CurrencyData {
   price: number;
@@ -216,11 +216,11 @@ export default function Component() {
 
   // Finding newest entry based on `last_updated` (you may also use createdAt if available)
   const newEntries = getNewListings(data);
-
+const number=0;
   return (
     <div className="bg-[#121212] font-inter text-white min-h-screen p-4 tracking-widest">
       <div className="max-w-7xl mx-auto">
-         <Appbar  TrueButton={false}></Appbar>
+         <Appbar  TrueButton={number}></Appbar>
        
         <Carousel />
 
@@ -468,7 +468,7 @@ function CryptoTable({ data }: { data: CombinedCryptoData[] | null }) {
           .filter((item) => !item.symbol.toLowerCase().includes("usdc"))
           .map((item, index) => {
             //Now we have to Take each Item and Match the data from the Table and then
-            // const data = dataKlines?.find((data) => data.symbol === item.symbol);
+            // const data = dataKlines?.find((data:any) => data.symbol === item.symbol);
             // if (!data) return null;
 
             return (
@@ -587,10 +587,10 @@ function CryptoTableRow({
         transition={{ delay: 0.5 }}
         className="text-left px-4 text-green-600 flex justify-end items-center last:rounded-r-xl"
       >
-        {/* <CryptoLineChart
+        <CryptoLineChart
           data={klineData ?? []}
           color={change > 0 ? "#34D399" : "#DC2626"}
-        /> */}
+        />
 
         {change<0?(<TrendingDown color="red"/>) : (<TrendingUp></TrendingUp>)}
       </motion.td>
@@ -659,7 +659,7 @@ function Carousel() {
       scale: 1,
       transition: {
         duration: 0.5,
-        ease: [0.4, 0.0, 0.2, 1],
+        ease: ["easeInOut"],
       },
     },
     exit: (direction: number) => ({
@@ -681,7 +681,7 @@ function Carousel() {
           key={currentIndex}
           className="absolute inset-0"
           custom={direction}
-          // variants={slideVariants}
+          variants={slideVariants}
           initial="enter"
           animate="center"
           exit="exit"
@@ -792,7 +792,7 @@ const formatData = (data: LineCryptoDataPoint[]) => {
   }));
 };
 
-const CryptoLineChart = ({ data, color }: any) => {
+const CryptoLineChart = ({ data, color }: {data:any,color:String}) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef<IChartApi | null>(null);
 
@@ -807,6 +807,9 @@ const CryptoLineChart = ({ data, color }: any) => {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#14161f",
       },
+      // watermark: {
+      //   visible: false,
+      // },
       rightPriceScale: {
         visible: false,
       },
@@ -828,24 +831,21 @@ const CryptoLineChart = ({ data, color }: any) => {
       },
       handleScroll: false,
       handleScale: false,
-      // priceScale: {
-      //   borderColor: 'transparent', // Set the border color to transparent
-      // },
     });
 
     chart.priceScale("right").applyOptions({
       borderVisible: false,
     });
 
-    const lineSeries = chart.addSeries({
-      
-      color:color,
-      lineWidth: 2,
-      lastValueVisible: false, // Hide the value at the end of the line
-      priceLineVisible: false, // Hide the price line
-    });
+    // const lineSeries = chart.addSeries({
+    //   color: color as string,
+    //   lineWidth: 2,
+    //   lastValueVisible: false, // Hide the value at the end of the line
+    //   priceLineVisible: false, // Hide the price line
+    // });
+    
 
-    lineSeries.setData(formattedData);
+    // lineSeries.setData(formattedData);
 
     chartRef.current = chart;
 

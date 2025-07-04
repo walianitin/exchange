@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     const symbol = searchParams.get('symbol');
     const interval = searchParams.get('interval');
     const startTime = searchParams.get('startTime');
-    const endTime = searchParams.get('endTime');
+   
 
     if (!symbol || !interval || !startTime ) {
         return NextResponse.json({ error: 'Missing required query parameters' }, { status: 400 });
