@@ -17,4 +17,4 @@ jobs:
         run: npm install  # Clean install for more reliable builds
 
       - name: Run Build
-        run: npm run dev  # Changed to standard build script
+        run: cd app && npm run dev  # Changed to standard build script
