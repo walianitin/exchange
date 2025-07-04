@@ -1,55 +1,94 @@
-The Exchange Platform is a high-performance trading system designed for real-time order execution with low latency. Built with a modular, event-driven architecture, the platform efficiently processes user orders, executes trades, and delivers live market updates. Its robust design ensures scalability and reliability, even under heavy load. ****Screenshot 2025-02-12 at 4 24 25 PM
+# ⚡ Exchange Platform
 
-****Screenshot 2025-02-12 at 6 27 19 PM
-Tech Stack
-Frontend:
-Next.js & React: For dynamic, server-rendered interfaces.
-TailwindCSS: For responsive, modern UI styling.
-Backend:
-Node.js & Express: Provides a fast, non-blocking environment for API services.
-Database:
-PostgreSQL: For reliable transactional data storage.
-Time Series DB: For logging and analyzing high-frequency trade data.
-Real-Time Communication:
-WebSockets (Socket.io): To push immediate market updates and trade notifications.
-Queue & Pub/Sub:
-Redis: Used to decouple order submission from processing and for distributing events.
-Order Matching Engine:
-Custom-built in Node.js: Processes and matches orders efficiently.
-Deployment:
-Railway: Currently Deployed on Railway.
-Architecture & Data Flow
-1. Order Submission
-User Interaction:
-Users submit buy/sell orders via the responsive frontend.
-API Processing:
-The frontend sends a POST request to /api/v1/order with the order details. The API validates these details and enqueues the order into Redis, isolating user requests from backend processing.
-2. Order Processing & Matching
-Order Matching Engine:
-Continuously polls the Redis queue, processing orders with a custom matching algorithm. When matching criteria are met, the engine executes a trade and triggers a trade_created event.
-3. Data Distribution & Persistence
-Real-Time Updates:
-Redis Pub/Sub broadcasts trade executions and order book updates to WebSocket-connected clients, ensuring traders see live market data.
-Data Storage:
-Executed trades are stored in PostgreSQL for transactional integrity. Simultaneously, a Time Series DB logs price and volume data for further analytics.
-Key Features
-Real-Time Execution:
-Ultra-fast order matching ensures minimal delay between submission and trade execution.
-Scalability:
-A modular, event-driven design allows seamless horizontal scaling as demand increases.
-Robust Data Management:
-Combines reliable transactional storage with high-frequency data logging for in-depth market analytics.
-Live Market Updates:
-WebSockets provide traders with immediate, real-time updates on market conditions.
-Challenges & Solutions
-Handling High Throughput:
-Challenge: Managing large volumes of concurrent orders.
-Solution: Leveraged Redis for queuing to decouple order intake from processing, thus avoiding bottlenecks.
+A high-performance, real-time trading system built to handle low-latency order execution at scale. The platform combines modular, event-driven architecture with efficient queuing, real-time communication, and scalable infrastructure.
 
-Ensuring Real-Time Trade Execution:
-Challenge: Minimizing delays between order submission and trade execution.
-Solution: Optimized the matching engine and used WebSockets combined with Redis Pub/Sub for fast, reliable updates.
+![Screenshot](https://github.com/user-attachments/assets/0c35661f-c6a7-4495-9e8a-9173ca331fd6)
+![image](https://github.com/user-attachments/assets/9215da14-eb53-4298-a6b1-9fc63b46c4f3)
 
-Efficient Data Persistence:
-Challenge: Storing high-frequency trading data without impacting performance.
-Solution: Adopted a dual-database strategy—using PostgreSQL for transactional data and a Time Series DB for analytics.
+---
+
+## 🚀 Tech Stack
+
+### Frontend
+- **Next.js & React** – Dynamic, server-rendered UI
+- **Tailwind CSS** – Fast, responsive styling
+
+### Backend
+- **Node.js & Express** – High-performance API services
+- **PostgreSQL** – Transactional data storage
+- **Time Series DB** – For high-frequency trade analytics
+- **exchange_apis** fro real time data
+
+### Real-Time Communication
+- **WebSockets (Socket.io)** – Live trade and market updates
+
+### Queue & Event System
+- **Redis** – Order queuing, Pub/Sub for real-time communication
+
+### Matching Engine
+- **Custom-built in Node.js** – Fast order matching with event triggers
+
+---
+
+## 🧠 Architecture & Data Flow
+
+### 1. Order Submission
+
+- **User Input**: Traders place buy/sell orders via the frontend.
+- **API Request**: Order data is sent to `POST /api/v1/order`.
+- **Redis Queue**: API validates and enqueues orders for processing.
+
+### 2. Order Matching
+
+- **Engine Polling**: A custom-built matching engine polls Redis.
+- **Execution**: Orders are matched and trades executed.
+- **Event Trigger**: Emits a `trade_created` event via Redis Pub/Sub.
+
+### 3. Real-Time Distribution & Storage
+
+- **WebSockets**: Broadcast updates to connected clients instantly.
+- **PostgreSQL**: Stores all trade records reliably.
+- **Time Series DB**: Logs price/volume data for analytics and visualization.
+
+---
+
+## ✨ Key Features
+
+- ⚡ **Real-Time Execution** – Millisecond-level trade processing
+- 📈 **Live Market Updates** – Instant updates via WebSockets
+- 🔁 **Scalable Design** – Horizontally scalable with decoupled services
+- 🧮 **Efficient Storage** – Dual-database approach for speed and analytics
+
+---
+
+## 🧩 Challenges & Solutions
+
+### Handling High Throughput
+- **Problem**: Concurrent order spikes
+- **Solution**: Redis queue decouples order intake from processing
+
+### Ensuring Real-Time Execution
+- **Problem**: Trade delay risks
+- **Solution**: Optimized matching engine + Redis Pub/Sub + WebSockets
+
+### Efficient Data Persistence
+- **Problem**: High-frequency data impacting performance
+- **Solution**: PostgreSQL for core trades, Time Series DB for analytics
+
+---
+
+## 📦 Setup Instructions
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/yourusername/exchange.git
+cd exchange
+
+# 2. Install dependencies
+npm install
+
+# 3. Setup environment variables
+cp .env.example .env
+
+# 4. Start the dev server
+npm run dev
