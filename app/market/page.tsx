@@ -18,6 +18,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CombineData, CombinedCryptoData } from "../utils/combine-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import Appbar from "@/components/ui/Appbar";
+import { any } from "zod";
 
 export interface CurrencyData {
   price: number;
@@ -382,11 +383,13 @@ function CryptoList({ items }: { items: CryptoData[] }) {
                 className="w-8 h-8 overflow-hidden rounded-full"
                 whileHover={{ scale: 1.1 }}
               >
-                {/* <Image
+                <Image
+                width={25}
+                height={25}
                   src={crypto.image}
                   alt={crypto.symbol}
                   className="w-full h-full object-cover"
-                /> */}
+                />
               </motion.div>
               <div>
                 <h3 className="font-medium uppercase">{crypto.symbol}</h3>
@@ -527,13 +530,13 @@ function CryptoTableRow({
           className="bg-neutral-700 rounded-full mr-5"
         >
             
-          {/* <Image
+          <Image
             src={image}
             alt={symbol}
             width={54}
             height={54}
             className="rounded-full"
-          /> */}
+          />
         </motion.div>
         <motion.div
           initial={{ x: -20 }}
@@ -678,7 +681,7 @@ function Carousel() {
           key={currentIndex}
           className="absolute inset-0"
           custom={direction}
-          variants={slideVariants}
+          // variants={slideVariants}
           initial="enter"
           animate="center"
           exit="exit"
@@ -804,9 +807,6 @@ const CryptoLineChart = ({ data, color }: any) => {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#14161f",
       },
-      watermark: {
-        visible: false,
-      },
       rightPriceScale: {
         visible: false,
       },
@@ -837,8 +837,9 @@ const CryptoLineChart = ({ data, color }: any) => {
       borderVisible: false,
     });
 
-    const lineSeries = chart.addLineSeries({
-      color: color,
+    const lineSeries = chart.addSeries({
+      
+      color:color,
       lineWidth: 2,
       lastValueVisible: false, // Hide the value at the end of the line
       priceLineVisible: false, // Hide the price line

@@ -3,8 +3,8 @@
 export default function  BidsTable({bids}: {bids:[string,string][]}){
     let currentTotal:number=0;
 
-    let relevantBids=bids.slice(15);
-          relevantBids.reverse();
+    let relevantBids=bids.slice(0,15);
+        //   relevantBids.reverse();
 
        const bidsWithTotal: [string, string, number][] = relevantBids.map(([price, quantity]) => [price, quantity, currentTotal += Number(quantity)]);
 
@@ -38,7 +38,7 @@ function Bid({price ,quantity,total, maxTotal }:{ price:string, quantity: string
             }}
         ></div>
             <div className={`flex justify-between text-xs w-full`}>
-                <div>
+                <div className="text-green-400">
                     {price}
                 </div>
                 <div>

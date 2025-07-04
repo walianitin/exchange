@@ -39,7 +39,7 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
 
      */
 
-    return <div>
+    return <div className="">
         {asksWithTotal.map(([price, quantity, total]) => <Ask maxTotal={maxTotal} key={price} price={price} quantity={quantity} total={total} />)}
     </div>
 }
@@ -72,8 +72,8 @@ function Ask({price, quantity, total, maxTotal}: {price: string, quantity: strin
         transition: "width 0.3s ease-in-out",
         }}
     ></div>
-    <div className="flex justify-between text-xs w-full">
-        <div>
+    <div className="flex justify-between text-xs w-full font-medium  text-high-emphasis truncate" >
+        <div className="text-red-400">
             {price}
         </div>
         <div>

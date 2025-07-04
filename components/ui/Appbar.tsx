@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { PrimaryButton, SuccessButton } from "@/components/ui//core/button"
 import { useRouter } from "next/navigation";
 
-export default function  Appbar  (TrueButton :any) {
+export default function  Appbar  ({TrueButton} :{TrueButton: number}) {
     const route = usePathname();
     const router = useRouter()
 
@@ -21,7 +21,7 @@ export default function  Appbar  (TrueButton :any) {
                    Explore Trade
                 </div>
             </div>
-            {TrueButton==true ?(<Button/>):(null)}
+            {TrueButton==1?(<Button/>):(null)}
         </div>
     </div>
 }

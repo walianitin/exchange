@@ -7,7 +7,7 @@ import  Appbar  from "../components/ui/Appbar";
 export default function Home() {
 const router=useRouter();
 const [loader ,setloader]=useState(true);
-
+const number =0;
     // useEffect(()=>{
     //     const timer= setTimeout(() => {
     //            router.push("/market")
@@ -19,6 +19,6 @@ const [loader ,setloader]=useState(true);
             return <div className=" bg-black min-h-screen p-4 tracking-widest ">    
 
                 <div className=" mb-10"></div>
-                <Appbar TrueButton={false}></Appbar>
+                <Appbar TrueButton={number as number}></Appbar>
             </div>
 }

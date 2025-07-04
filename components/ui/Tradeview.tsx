@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { ChartManager } from "../../app/utils/ChartManager";
 import { getKlines } from "../../app/utils/httpClient";
 import { KLine } from "../../app/utils/types";
-import { number, string } from "zod";
+
 
 
 export function TradeView({ market}:{ market: string }) {
@@ -54,7 +54,7 @@ export function TradeView({ market}:{ market: string }) {
 
   return (
     <>
-      <div  ref={chartRef} style={{ height: "520px", width: "100%", marginTop: 4 }}></div>
+      <div ref={chartRef} style={{ height: "520px", width: "98%", marginTop: 4 }}></div>
     </>
   );
 }
