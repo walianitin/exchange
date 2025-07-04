@@ -20,11 +20,7 @@ jobs:
           node-version: 18
 
       - name: 📦 Install Dependencies
-        run: |
-          cd app
-          npm ci --ignore-scripts=false
+        run: npm ci --ignore-scripts=false
 
       - name: 🔨 Build Project
-        run: |
-          cd app
-          npm run build
+        run: npm run build
