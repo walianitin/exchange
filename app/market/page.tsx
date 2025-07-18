@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, number } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ColorType,
   createChart,
@@ -792,7 +792,7 @@ const formatData = (data: LineCryptoDataPoint[]) => {
   }));
 };
 
-const CryptoLineChart = ({ data, color }: {data:any,color:String}) => {
+const CryptoLineChart = ({ data, color }: {data: LineCryptoDataPoint[], color: string}) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef<IChartApi | null>(null);
 

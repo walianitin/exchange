@@ -1,16 +1,15 @@
 import { getinfo } from "@/app/utils/httpClient";
 import { marketData } from "@/app/utils/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 
 export function TopGainer(){
-    const [data,setData]=useState<marketData[]>();
 
     useEffect(()=>{
         getinfo().then((data:marketData[])=>{
-            const selectedData=data.sort((a:any,b:any)=> b.priceChangePercent- a.priceChangePercent).slice(10)
+            const selectedData=data.sort((a: marketData,b: marketData)=> parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent)).slice(10)
 
-            setData(selectedData);
+            console.log("Top gainer data:", selectedData);
          
         })
     },[])

@@ -1,8 +1,13 @@
 "use client";
-import Alert from "@mui/material/Alert";
 import { useState,useEffect } from "react";
 import Image from "next/image"
 import { getAllInfo } from "@/app/utils/httpClient";
+
+interface CoinData {
+  symbol: string;
+  image: string;
+}
+
 export function SwapUI({ market }: {market: string}) {
     const [amount, setAmount] = useState('');
     const [activeTab, setActiveTab] = useState('buy');
@@ -12,13 +17,13 @@ export function SwapUI({ market }: {market: string}) {
       useEffect(() => {
         //fetch the Image from getAllInfo
         async function fetchImage() {
-          const data = await getAllInfo();
-           const image= data.find((d: any) => d.symbol.toUpperCase() === market.split('_')[0] )?.image
+          const data: CoinData[] = await getAllInfo();
+           const image= data.find((d: CoinData) => d.symbol.toUpperCase() === market.split('_')[0] )?.image
                 console.log(image)
-                setimage(image)
+                setimage(image || "")
         }
         fetchImage();
-      }, []);
+      }, [market]);
 
     return <div>
         <div className="flex flex-col font-normal justify-between">
@@ -121,7 +126,7 @@ export function SwapUI({ market }: {market: string}) {
 </div>
 }
 
-function LimitButton({ type, setType }: { type: string, setType: any }) {
+function LimitButton({ type, setType }: { type: string, setType: (type: string) => void }) {
     return <div className="flex flex-col cursor-pointer justify-center py-2 mt-2" onClick={() => setType('limit')}>
     <div className={`text-sm font-medium py-1 border-b-2 ${type === 'limit' ? "border-accentBlue text-baseTextHighEmphasis" : "border-transparent text-baseTextMedEmphasis hover:border-baseTextHighEmphasis hover:text-baseTextHighEmphasis"}`}>
         Limit
@@ -129,7 +134,7 @@ function LimitButton({ type, setType }: { type: string, setType: any }) {
 </div>
 }
 
-function MarketButton({ type, setType }: { type: string, setType: any }) {
+function MarketButton({ type, setType }: { type: string, setType: (type: string) => void }) {
     return  <div className="flex flex-col cursor-pointer justify-center py-2 mt-2 " onClick={() => setType('market')}>
     <div className={`text-sm font-medium py-1 border-b-2 ${type === 'market' ? "border-accentBlue text-baseTextHighEmphasis" : "border-b-2 border-transparent text-baseTextMedEmphasis hover:border-baseTextHighEmphasis hover:text-baseTextHighEmphasis"} `}>
         Market
@@ -137,7 +142,7 @@ function MarketButton({ type, setType }: { type: string, setType: any }) {
     </div>
 }
 
-function BuyButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: any }) {
+function BuyButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
     return <div className={`flex flex-col mb-[-2px] flex-1 cursor-pointer justify-center border-b-2 p-4 mr-2 ml-2 hover:text-green-600 rounded-2xl ${activeTab === 'buy' ? 'bg-green-200 text-green-500 ' :'border-b-baseBorderMed hover:border-b-baseBorderFocus'}`} onClick={() => setActiveTab('buy')}>
         <p className="text-center text-sm font-semibold text-greenText">
             Buy
@@ -145,7 +150,7 @@ function BuyButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTa
     </div>
 }
 
-function SellButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: any }) {
+function SellButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
     return <div className={`flex  flex-col  rounded-2xl mb-[-2px] flex-1 hover:text-red-600 cursor-pointer justify-center border-b-2 p-4 ${activeTab === 'sell' ? 'bg-red-300 bg-redBackgroundTransparent' : 'border-b-baseBorderMed hover:border-b-baseBorderFocus'}`} onClick={() => setActiveTab('sell')}>
         <p className="text-center text-sm   font-semibold text-redText">
             Sell

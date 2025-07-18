@@ -3,12 +3,12 @@
 export default function  BidsTable({bids}: {bids:[string,string][]}){
     let currentTotal:number=0;
 
-    let relevantBids=bids.slice(0,15);
+    const relevantBids=bids.slice(0,15);
         //   relevantBids.reverse();
 
        const bidsWithTotal: [string, string, number][] = relevantBids.map(([price, quantity]) => [price, quantity, currentTotal += Number(quantity)]);
 
-    const maxTotal = relevantBids.reduce((acc, [_, quantity]) => acc + Number(quantity), 0);
+    const maxTotal = relevantBids.reduce((acc, [, quantity]) => acc + Number(quantity), 0);
     return (
     <div>
         {bidsWithTotal?.map(([price,quantity,total])=><Bid maxTotal={maxTotal} total={total} key={price} price={price} quantity={quantity} />)}

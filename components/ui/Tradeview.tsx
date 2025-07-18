@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { ChartManager } from "../../app/utils/ChartManager";
 import { getKlines } from "../../app/utils/httpClient";
 import { KLine } from "../../app/utils/types";
@@ -13,7 +13,7 @@ export function TradeView({ market}:{ market: string }) {
 
 
 
-  const init = async () => {
+  const init = useCallback(async () => {
     let klineData: KLine[] = [];
     try {
       const interval="1h";
@@ -43,14 +43,13 @@ export function TradeView({ market}:{ market: string }) {
           color: "white",
         }
       );
-      //@ts-ignore
       chartManagerRef.current = chartManager;
     }
-  };
+  }, [market]);
 
   useEffect(() => {
       init();
-  }, [market, chartRef]);
+  }, [market, chartRef, init]);
 
   return (
     <>

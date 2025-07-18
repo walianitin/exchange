@@ -1,11 +1,9 @@
 import { getinfo } from "@/app/utils/httpClient";
 import { marketData } from "@/app/utils/types"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 
-export default function Newtable(){
-
-    const [Newtable,setnewtable]= useState<marketData[]>();
+export default function NewTable(){
 
     useEffect(()=>{
 
@@ -13,8 +11,8 @@ export default function Newtable(){
                  const size=data.length;
 
                 const selected_Data:marketData[] = data.slice(size - 10, size);
-               
-                setnewtable(selected_Data);
+
+                console.log("New table data:", selected_Data);
         })
         
     },[])

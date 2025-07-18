@@ -2,11 +2,22 @@ import { Ticker } from "./types";
 
 export const BASE_URL = "wss://ws.backpack.exchange/"
 
+export interface MessageType {
+    method?: string;
+    params?: string[];
+    [key: string]: unknown;
+}
+
+export interface CallbackInfo {
+    callback: (data: unknown) => void;
+    id: string;
+}
+
 export class SignalingManager {
     private ws: WebSocket;
     private static instance: SignalingManager;
-    private bufferedMessages: any[] = [];
-    private callbacks: any = {};
+    private bufferedMessages: MessageType[] = [];
+    private callbacks: { [type: string]: CallbackInfo[] } = {};
     private id: number;
     private initialized: boolean = false;
 
@@ -70,7 +81,7 @@ export class SignalingManager {
         }
     }
 
-    sendMessage(message: any) {
+    sendMessage(message: MessageType) {
         const messageToSend = {
             ...message,
             id: this.id++
@@ -82,7 +93,7 @@ export class SignalingManager {
         this.ws.send(JSON.stringify(messageToSend));
     }
 
-    async registerCallback(type: string, callback: any, id: string) {
+    async registerCallback(type: string, callback: (data: unknown) => void, id: string) {
         this.callbacks[type] = this.callbacks[type] || [];
         this.callbacks[type].push({ callback, id });
        

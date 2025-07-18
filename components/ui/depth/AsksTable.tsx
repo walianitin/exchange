@@ -16,12 +16,12 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
      * 129.93 10   10
      */
 
-    let asksWithTotal: [string, string, number][] = [];
+    const asksWithTotal: [string, string, number][] = [];
     for (let i = relevantAsks.length - 1; i>=0; i--)  {
         const [price, quantity] = relevantAsks[i];
         asksWithTotal.push([price, quantity, currentTotal += Number(quantity)]);
     }
-    const maxTotal = relevantAsks.reduce((acc, [_, quantity]) => acc + Number(quantity), 0);
+    const maxTotal = relevantAsks.reduce((acc, [, quantity]) => acc + Number(quantity), 0);
 
      /*
      *    129.93 10   10

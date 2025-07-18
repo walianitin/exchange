@@ -9,6 +9,11 @@ import  Image  from "next/image";
 
 import { getAllInfo } from "../../app/utils/httpClient";
 
+interface CoinData {
+  symbol: string;
+  image: string;
+}
+
 export const MarketBar = ({market}: {market: string}) => {
     const [ticker, setTicker] = useState<Ticker | null>(null);
     // const [data, setdata]=useState<CryptoData[]>([]);
@@ -17,18 +22,18 @@ export const MarketBar = ({market}: {market: string}) => {
   useEffect(() => {
     //fetch the Image from getAllInfo
     async function fetchImage() {
-      const data = await getAllInfo();
-      const image = data.find((d: any) => d.symbol.toLowerCase() === market.split("_")[0].toLowerCase())?.image;
-      settokenImage(image);
-      setimage(data.find((d: any) => d.symbol.toLowerCase() === "usdc")?.image);
+      const data: CoinData[] = await getAllInfo();
+      const image = data.find((d: CoinData) => d.symbol.toLowerCase() === market.split("_")[0].toLowerCase())?.image;
+      settokenImage(image || null);
+      setimage(data.find((d: CoinData) => d.symbol.toLowerCase() === "usdc")?.image || null);
     }
     fetchImage();
-  }, []);
+  }, [market]);
 
 
     useEffect(() => {
         getTicker(market).then(setTicker);
-        SignalingManager.getInstance().registerCallback("ticker",(data:any)=>{
+        SignalingManager.getInstance().registerCallback("ticker",(data: Ticker)=>{
 
             setTicker((prevTicker) => ({
                 firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? '',

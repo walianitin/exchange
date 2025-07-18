@@ -26,8 +26,8 @@ export class ChartManager {
 
 
   constructor(
-    ref: any,
-    initialData: any[],
+    ref: HTMLElement,
+    initialData: { timestamp: number; open: number; high: number; low: number; close: number; volume?: number }[],
     layout: { background: string; color: string }
   ) {
     const chart = createLightWeightChart(ref, {
@@ -73,7 +73,7 @@ export class ChartManager {
   }
 
 
-  public update(updatedPrice: any) {
+  public update(updatedPrice: { close: number; low: number; high: number; open: number; newCandleInitiated?: boolean; time?: number }) {
     if (!this.lastUpdateTime) {
       this.lastUpdateTime = new Date().getTime();
     }
@@ -86,7 +86,7 @@ export class ChartManager {
       open: updatedPrice.open,
     });
 
-    if (updatedPrice.newCandleInitiated) {
+    if (updatedPrice.newCandleInitiated && updatedPrice.time) {
       this.lastUpdateTime = updatedPrice.time;
     }
   }

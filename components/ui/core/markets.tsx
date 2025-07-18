@@ -1,13 +1,4 @@
-import { getTicker } from "@/app/utils/httpClient";
-import { useEffect, useState } from "react"
-
-
-export default function markets(){
-
-    const [market,setmarkets]=useState();
-
-
-  
+export default function Markets(){
     return <div>
         markets
     </div>

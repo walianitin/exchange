@@ -3,7 +3,11 @@ import {getDepth,getTicker} from '@/app/utils/httpClient'
 import {AskTable} from "./AsksTable"
 import Bidstable from './Bidstable'
 import { SignalingManager } from "@/app/utils/SignalingManager";
-import { sign } from "crypto";
+
+interface DepthData {
+    bids: [string, string][];
+    asks: [string, string][];
+}
 
 export function Depth({market }:{market:string}){
     const [asks,setasks]=useState<[string,string][]>();
@@ -14,7 +18,7 @@ export function Depth({market }:{market:string}){
     useEffect(() => {
         
        
-        SignalingManager.getInstance().registerCallback("depth",(data:any)=>{
+        SignalingManager.getInstance().registerCallback("depth",(data: DepthData)=>{
 
             setbids((originalbids) => {
                
@@ -62,7 +66,7 @@ export function Depth({market }:{market:string}){
                  SignalingManager.getInstance().sendMessage({"method":"UNSUBSCRIBE" ,"params":[`depth.200ms.${market}`]});
                  SignalingManager.getInstance().deRegisterCallback("depth", `DEPTH-${market}`);
             }
-        },[]);
+        },[market]);
     
 
         return <div className="bg-black  border-gray-500 border-b-4 rounded-2xl ">

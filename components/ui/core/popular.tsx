@@ -1,11 +1,9 @@
 import { getinfo } from "@/app/utils/httpClient";
-import { useEffect, useState } from "react"
-import { symbol } from "zod";
+import { useEffect } from "react"
 import { marketData } from "@/app/utils/types";
 
 
 export default function PopularTable(){
-        const [popular, setPopular] = useState<marketData[]>([]);
 
         useEffect(() => {
             getinfo()
@@ -14,9 +12,9 @@ export default function PopularTable(){
                         .sort((a, b) => Number(b.lastPrice) - Number(a.lastPrice))
                         .slice(0, 10);
                      
-                    setPopular(selected_data);
+                    console.log("Popular data:", selected_data);
                 })
-                .catch((error: any) => {
+                .catch((error: Error) => {
                     console.error("Failed to fetch popular data:", error);
                 });
         }, []);

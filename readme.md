@@ -2,11 +2,7 @@
 
 A high-performance, real-time trading system built to handle low-latency order execution at scale. The platform combines modular, event-driven architecture with efficient queuing, real-time communication, and scalable infrastructure.
 
-![image](https://github.com/user-attachments/assets/d65d9768-36dc-46e5-9690-63dcfbc6c9bf)
-                    
-                      
-  
-![image](https://github.com/user-attachments/assets/9215da14-eb53-4298-a6b1-9fc63b46c4f3)
+![Screenshot](https://github.com/user-attachments/assets/0c35661f-c6a7-4495-9e8a-9173ca331fd6)
 
 ---
 
@@ -20,7 +16,6 @@ A high-performance, real-time trading system built to handle low-latency order e
 - **Node.js & Express** – High-performance API services
 - **PostgreSQL** – Transactional data storage
 - **Time Series DB** – For high-frequency trade analytics
-- **exchange_apis** fro real time data
 
 ### Real-Time Communication
 - **WebSockets (Socket.io)** – Live trade and market updates
@@ -30,6 +25,9 @@ A high-performance, real-time trading system built to handle low-latency order e
 
 ### Matching Engine
 - **Custom-built in Node.js** – Fast order matching with event triggers
+
+### Deployment
+- **Railway** – Cloud deployment
 
 ---
 
@@ -84,8 +82,8 @@ A high-performance, real-time trading system built to handle low-latency order e
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/yourusername/exchange.git
-cd exchange
+git clone https://github.com/yourusername/exchange-platform.git
+cd exchange-platform
 
 # 2. Install dependencies
 npm install
