@@ -8,11 +8,6 @@ import { KLine } from "../../app/utils/types";
 export function TradeView({ market}:{ market: string }) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartManagerRef = useRef<ChartManager>(null);
-
-
-
-
-
   const init = useCallback(async () => {
     let klineData: KLine[] = [];
     try {
@@ -23,7 +18,7 @@ export function TradeView({ market}:{ market: string }) {
 
     } catch (e) { return e}
 
-    if (chartRef) {
+    if (chartRef.current) {
       if (chartManagerRef.current) {
         chartManagerRef.current.destroy();
       }
@@ -35,7 +30,7 @@ export function TradeView({ market}:{ market: string }) {
             high: parseFloat(x.high),
             low: parseFloat(x.low),
             open: parseFloat(x.open),
-            timestamp: new Date(x.end), 
+            timestamp: new Date(x.end).getTime(), 
           })),
         ].sort((x, y) => (x.timestamp < y.timestamp ? -1 : 1)) || [],
         {

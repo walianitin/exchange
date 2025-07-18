@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
   ColorType,
   createChart,
@@ -647,7 +647,7 @@ function Carousel() {
     );
   };
 
-  const slideVariants = {
+  const slideVariants: Variants = {
     enter: (direction: number) => ({
       x: direction > 0 ? "100%" : "-100%",
       opacity: 0,
@@ -659,7 +659,7 @@ function Carousel() {
       scale: 1,
       transition: {
         duration: 0.5,
-        ease: ["easeInOut"],
+        ease: "easeInOut",
       },
     },
     exit: (direction: number) => ({

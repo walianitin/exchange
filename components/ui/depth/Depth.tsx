@@ -18,17 +18,14 @@ export function Depth({market }:{market:string}){
     useEffect(() => {
         
        
-        SignalingManager.getInstance().registerCallback("depth",(data: DepthData)=>{
-
+        SignalingManager.getInstance().registerCallback("depth",(data: unknown) => {
+            const depthData = data as DepthData;
             setbids((originalbids) => {
-               
-               
                 const bidsAfterUpdate = [...(originalbids || [])];
-
                 for (let i = 0; i < bidsAfterUpdate.length; i++) {
-                    for (let j = 0; j < data.bids.length; j++) {
-                        if (bidsAfterUpdate[i][0] === data.bids[j][0]) {
-                            bidsAfterUpdate[i][1] = data.bids[j][1];
+                    for (let j = 0; j < depthData.bids.length; j++) {
+                        if (bidsAfterUpdate[i][0] === depthData.bids[j][0]) {
+                            bidsAfterUpdate[i][1] = depthData.bids[j][1];
                             break;
                         }
                     }
@@ -38,19 +35,17 @@ export function Depth({market }:{market:string}){
 
             setasks((originalAsk) => {
                 const AskAfterUpdate = [ ...(originalAsk || []) ];
-                        for (let i=0;i<AskAfterUpdate.length;i++)
-                        {
-                            for(let j=0;j<data.asks.length ;j++){
-                                if(AskAfterUpdate[i][0]===data.asks[j][0]){
-                                    AskAfterUpdate[i][1]=data.asks[j][1];
-                                    break;
-                                }
-                            }
+                for (let i=0;i<AskAfterUpdate.length;i++)
+                {
+                    for(let j=0;j<depthData.asks.length ;j++){
+                        if(AskAfterUpdate[i][0]===depthData.asks[j][0]){
+                            AskAfterUpdate[i][1]=depthData.asks[j][1];
+                            break;
                         }
+                    }
+                }
                 return AskAfterUpdate;
             });
-
-
         },`DEPTH-${market}`);
    SignalingManager.getInstance().sendMessage({"method":"SUBSCRIBE","params":[`depth.${market}`]});
 

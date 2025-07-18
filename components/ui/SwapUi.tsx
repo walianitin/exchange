@@ -59,6 +59,7 @@ export function SwapUI({ market }: {market: string}) {
                                 <div className="flex flex-row absolute right-1 top-1 p-2">
                                     <div className="relative">
                                                <Image
+                                                 src={usdcImage as string }
                                                  alt="Market Logo"
                                                  loading="lazy"
                                                  decoding="async"
@@ -66,7 +67,6 @@ export function SwapUI({ market }: {market: string}) {
                                                  width={30}
                                                  height={30}
                                                  className="z-22 rounded-full h-6 mb-2 outline-baseBackgroundL1"
-                                                 src={usdcImage as string }
                                                />
                                     </div>
                                 </div>

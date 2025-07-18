@@ -33,28 +33,29 @@ export const MarketBar = ({market}: {market: string}) => {
 
     useEffect(() => {
         getTicker(market).then(setTicker);
-        SignalingManager.getInstance().registerCallback("ticker",(data: Ticker)=>{
+        SignalingManager.getInstance().registerCallback("ticker",(data: unknown)=>{
 
+            const tickerData = data as Ticker;
             setTicker((prevTicker) => ({
-                firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? '',
-                high: data?.high ?? prevTicker?.high ?? '',
-                lastPrice: data?.lastPrice ?? prevTicker?.lastPrice ?? '',
-                low: data?.low ?? prevTicker?.low ?? '',
-                priceChange: data?.priceChange ?? prevTicker?.priceChange ?? '',
-                priceChangePercent: data?.priceChangePercent ?? prevTicker?.priceChangePercent ?? '',
-                quoteVolume: data?.quoteVolume ?? prevTicker?.quoteVolume ?? '',
-                symbol: data?.symbol ?? prevTicker?.symbol ?? '',
-                trades: data?.trades ?? prevTicker?.trades ?? '',
-                volume: data?.volume ?? prevTicker?.volume ?? '',
+                firstPrice: tickerData?.firstPrice ?? prevTicker?.firstPrice ?? '',
+                high: tickerData?.high ?? prevTicker?.high ?? '',
+                lastPrice: tickerData?.lastPrice ?? prevTicker?.lastPrice ?? '',
+                low: tickerData?.low ?? prevTicker?.low ?? '',
+                priceChange: tickerData?.priceChange ?? prevTicker?.priceChange ?? '',
+                priceChangePercent: tickerData?.priceChangePercent ?? prevTicker?.priceChangePercent ?? '',
+                quoteVolume: tickerData?.quoteVolume ?? prevTicker?.quoteVolume ?? '',
+                symbol: tickerData?.symbol ?? prevTicker?.symbol ?? '',
+                trades: tickerData?.trades ?? prevTicker?.trades ?? '',
+                volume: tickerData?.volume ?? prevTicker?.volume ?? '',
             }))
         },`ticker-${market}`)
 
     SignalingManager.getInstance().sendMessage({"method":"SUBSCRIBE","params":[`ticker.${market}`]});
 
-    return ()=>[
-        SignalingManager.getInstance().sendMessage({"method":"UNSUBSCRIBE","params":[`ticker.${market}`]}),
-        SignalingManager.getInstance().deRegisterCallback("ticker",`TICKER-${market}`)
-    ]
+    return () => {
+        SignalingManager.getInstance().sendMessage({"method":"UNSUBSCRIBE","params":[`ticker.${market}`]});
+        SignalingManager.getInstance().deRegisterCallback("ticker",`TICKER-${market}`);
+    }
         
     }, [market])
 
@@ -98,6 +99,7 @@ function Ticker({market,TokenImage, image}: {market: string,TokenImage:string,im
     return <div className="flex h-[60px] shrink-0 space-x-4">
         <div className="flex flex-row relative ml-2 -mr-4">
              <Image
+          src={market === "TATA_INR" ? "/TATA.png" : TokenImage || "/sol copy.webp"}
           alt="Market Logo"
           loading="lazy"
           decoding="async"
@@ -105,9 +107,9 @@ function Ticker({market,TokenImage, image}: {market: string,TokenImage:string,im
           width={30}
           height={30}
           className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-          src={market === "TATA_INR" ? "/TATA.png" : TokenImage || "/sol copy.webp"}
         />
               <Image
+          src={image}
           alt="Market Logo"
           loading="lazy"
           decoding="async"
@@ -115,7 +117,6 @@ function Ticker({market,TokenImage, image}: {market: string,TokenImage:string,im
           width={30}
           height={30}
           className="z-2 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-          src={image}
         />
            
         </div>

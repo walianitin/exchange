@@ -62,7 +62,14 @@ export class ChartManager {
     });
     this.chart = chart;
 
-    this.candleSeries = chart.addCandlestickSeries({ upColor: '#02c176', downColor: '#ff4747', borderVisible: false, wickUpColor: '#02c176', wickDownColor: '#ef5350' });
+    // @ts-expect-error - addCandlestickSeries method exists but type definition may be incomplete
+    this.candleSeries = chart.addCandlestickSeries({
+      upColor: '#02c176',
+      downColor: '#ff4747',
+      borderVisible: false,
+      wickUpColor: '#02c176',
+      wickDownColor: '#ef5350'
+    });
 
     this.candleSeries.setData(
       initialData.map((data) => ({
