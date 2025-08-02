@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 @tailwind base;
