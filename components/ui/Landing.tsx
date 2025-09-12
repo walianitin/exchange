@@ -8,7 +8,7 @@ export default function Landing(){
     return <>
         <div className=" flex flex-row p-4  bg-neutral-900  text-gray-400  tracking-wider   items-center rounded-2xl ml-10 mr-10 sticky-top top-10 z-0  text-md  text-lg" style={{fontFamily:"Fajalla One, sans-serif"}} >
             <div>
-                    <Image src={ "/logo"} alt=" logo " height={20 } width={30 } loading="lazy"></Image>
+                    <Image src={ "/logo.svg"} alt=" logo " height={70 } width={100 } loading="lazy" className="rounded-full bg-yellow-300"></Image>
             </div>
             <div className=" flex flex-1 ">
                     <ul className=" flex flex-1 gap-20 justify-center cursor-pointer ">
@@ -18,7 +18,7 @@ export default function Landing(){
                         <li className="hover:text-gray-300" onClick={()=>
                             router.push("/market")
                         }>Markets</li>
-                        <li className="hover:text-gray-300" onClick={()=>
+                        <li className="hover:text-gray-300 hover:shadow-white hover:bg-grey-100/10" onClick={()=>
                             router.push("/trade/SOL_USDT")
                         } > Trades</li>
                     </ul>

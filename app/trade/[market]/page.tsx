@@ -5,15 +5,23 @@ import { TradeView } from "@/components/ui/Tradeview";
 import Appbar from "@/components/ui/Appbar";
 import {SwapUI} from "@/components/ui/SwapUi";
 import { MarketBar } from "@/components/ui/MarketBar";
+import { useEffect } from "react";
+
 
 
 export default function Page() {
     const { market } = useParams();
+    useEffect(()=>{
+      alert("Backend might be slow please watch the demo video at repo ")
+
+    },[])
 const number =1;
     return (
+    
     <div className="flex flex-col h-screen font-inter lg:flex-row w-full bg-black text-white">
       <div className="flex flex-col lg:w-3/4 h-full ">
         {/* MarketBar at the top */}
+  
          <div><Appbar TrueButton={number}/></div>
         <div className="w-full bg-blue-700/5 pl-4">
           <MarketBar market={market as string} />
