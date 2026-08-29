@@ -1,60 +1,30 @@
-"use client"
-import { useParams } from "next/navigation"
+"use client";
+
+import { useParams } from "next/navigation";
+
 import { Depth } from "@/components/ui/depth/Depth";
 import { TradeView } from "@/components/ui/Tradeview";
-import Appbar from "@/components/ui/Appbar";
-import {SwapUI} from "@/components/ui/SwapUi";
+import { SwapUI } from "@/components/ui/SwapUi";
 import { MarketBar } from "@/components/ui/MarketBar";
-import { useEffect } from "react";
+import { OrdersPanel } from "@/components/trade/orders-panel";
 
+export default function TradePage() {
+  const { market } = useParams();
+  const symbol = String(market ?? "SOL_USDC");
 
-
-export default function Page() {
-    const { market } = useParams();
-    useEffect(()=>{
-      alert("Backend might be slow please watch the demo video at repo ")
-
-    },[])
-const number =1;
-    return (
-    
-    <div className="flex flex-col h-screen font-inter lg:flex-row w-full bg-black text-white">
-      <div className="flex flex-col lg:w-3/4 h-full ">
-        {/* MarketBar at the top */}
-  
-         <div><Appbar TrueButton={number}/></div>
-        <div className="w-full bg-blue-700/5 pl-4">
-          <MarketBar market={market as string} />
+  return (
+    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-black lg:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <MarketBar market={symbol} />
+        <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_260px]">
+          <TradeView market={symbol} />
+          <Depth market={symbol} />
         </div>
-
-        <div className="flex flex-col lg:flex-row w-full h-full">
-          {/* Left half for TradeView */}
-          <div className="lg:w-2/3 flex flex-col ">
-            <TradeView market={market as string} />
-          </div>
-
-          {/* <div className="border-t lg:border-t-0 lg:border-l border-neutral-800" /> */}
-
-          {/* Right half split between Depth and SwapUI */}
-          <div className="lg:w-1/3 flex flex-col lg:flex-row h-full">
-            <div
-              className="flex-1 p-1 overflow-auto no-scrollbar "
-              style={{ maxHeight: "75vh" , maxWidth:"45vh"}}
-            >
-              <Depth market={market as string} />
-            </div>
-           {/* ÷ <div className="border-t lg:border-t-0 lg:border-l border-neutral-800" /> */}
-          </div>
-        </div>
-        <div>
-          {/* <OrderTable openOrders={openOrders} /> */}
-        </div>
+        <OrdersPanel market={symbol} />
       </div>
-
-      {/* SwapUI at the bottom on mobile, right on larger screens */}
-      <div className="lg:w-1/4 overflow-auto lg:order-none order-last h-[550px] rounded-2xl mt-20 pt-1.5 bg-blue-300/10">
-        <SwapUI market={market as string} />
-      </div>
+      <aside className="w-full border-t border-zinc-800 lg:w-[300px] lg:border-t-0 lg:border-l">
+        <SwapUI market={symbol} />
+      </aside>
     </div>
   );
 }

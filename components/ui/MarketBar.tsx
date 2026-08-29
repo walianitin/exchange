@@ -1,134 +1,153 @@
-
-
 "use client";
-import { useEffect, useState } from "react";
-import type { Ticker } from "../../app/utils/types";
-import { getTicker } from "../../app/utils/httpClient";
-import { SignalingManager } from "../../app/utils/SignalingManager";
-import  Image  from "next/image";
 
-import { getAllInfo } from "../../app/utils/httpClient";
+import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+
+import type { Ticker } from "@/app/utils/types";
+import { getAllInfo, getTicker } from "@/app/utils/httpClient";
+import { SignalingManager } from "@/app/utils/SignalingManager";
+import { TokenAvatar } from "@/components/token-avatar";
+import { formatPercent } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 interface CoinData {
   symbol: string;
   image: string;
 }
 
-export const MarketBar = ({market}: {market: string}) => {
-    const [ticker, setTicker] = useState<Ticker | null>(null);
-    // const [data, setdata]=useState<CryptoData[]>([]);
-     const [tokenImage, settokenImage] = useState<string | null>(null);
-     const[usdcImage,setimage]=useState<string | null >(null);
+export function MarketBar({ market }: { market: string }) {
+  const [ticker, setTicker] = useState<Ticker | null>(null);
+  const [tokenImage, setTokenImage] = useState<string | null>(null);
+  const [base, quote] = market.split("_");
+
   useEffect(() => {
-    //fetch the Image from getAllInfo
     async function fetchImage() {
-      const data: CoinData[] = await getAllInfo();
-      const image = data.find((d: CoinData) => d.symbol.toLowerCase() === market.split("_")[0].toLowerCase())?.image;
-      settokenImage(image || null);
-      setimage(data.find((d: CoinData) => d.symbol.toLowerCase() === "usdc")?.image || null);
+      try {
+        const data: CoinData[] = await getAllInfo();
+        setTokenImage(
+          data.find((d) => d.symbol.toLowerCase() === base.toLowerCase())
+            ?.image ?? null
+        );
+      } catch {
+        setTokenImage(null);
+      }
     }
     fetchImage();
+  }, [base]);
+
+  useEffect(() => {
+    getTicker(market).then(setTicker).catch(() => setTicker(null));
+    const id = `ticker-${market}`;
+    SignalingManager.getInstance().registerCallback(
+      "ticker",
+      (data: unknown) => {
+        const tickerData = data as Ticker;
+        setTicker((prevTicker) => ({
+          firstPrice: tickerData?.firstPrice ?? prevTicker?.firstPrice ?? "",
+          high: tickerData?.high ?? prevTicker?.high ?? "",
+          lastPrice: tickerData?.lastPrice ?? prevTicker?.lastPrice ?? "",
+          low: tickerData?.low ?? prevTicker?.low ?? "",
+          priceChange: tickerData?.priceChange ?? prevTicker?.priceChange ?? "",
+          priceChangePercent:
+            tickerData?.priceChangePercent ??
+            prevTicker?.priceChangePercent ??
+            "",
+          quoteVolume:
+            tickerData?.quoteVolume ?? prevTicker?.quoteVolume ?? "",
+          symbol: tickerData?.symbol ?? prevTicker?.symbol ?? "",
+          trades: tickerData?.trades ?? prevTicker?.trades ?? "",
+          volume: tickerData?.volume ?? prevTicker?.volume ?? "",
+        }));
+      },
+      id
+    );
+    SignalingManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`ticker.${market}`],
+    });
+    return () => {
+      SignalingManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`ticker.${market}`],
+      });
+      SignalingManager.getInstance().deRegisterCallback("ticker", id);
+    };
   }, [market]);
 
+  const change = Number(ticker?.priceChangePercent ?? 0);
+  const up = change >= 0;
+  const last = ticker?.lastPrice
+    ? Number(ticker.lastPrice).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : "—";
 
-    useEffect(() => {
-        getTicker(market).then(setTicker);
-        SignalingManager.getInstance().registerCallback("ticker",(data: unknown)=>{
-
-            const tickerData = data as Ticker;
-            setTicker((prevTicker) => ({
-                firstPrice: tickerData?.firstPrice ?? prevTicker?.firstPrice ?? '',
-                high: tickerData?.high ?? prevTicker?.high ?? '',
-                lastPrice: tickerData?.lastPrice ?? prevTicker?.lastPrice ?? '',
-                low: tickerData?.low ?? prevTicker?.low ?? '',
-                priceChange: tickerData?.priceChange ?? prevTicker?.priceChange ?? '',
-                priceChangePercent: tickerData?.priceChangePercent ?? prevTicker?.priceChangePercent ?? '',
-                quoteVolume: tickerData?.quoteVolume ?? prevTicker?.quoteVolume ?? '',
-                symbol: tickerData?.symbol ?? prevTicker?.symbol ?? '',
-                trades: tickerData?.trades ?? prevTicker?.trades ?? '',
-                volume: tickerData?.volume ?? prevTicker?.volume ?? '',
-            }))
-        },`ticker-${market}`)
-
-    SignalingManager.getInstance().sendMessage({"method":"SUBSCRIBE","params":[`ticker.${market}`]});
-
-    return () => {
-        SignalingManager.getInstance().sendMessage({"method":"UNSUBSCRIBE","params":[`ticker.${market}`]});
-        SignalingManager.getInstance().deRegisterCallback("ticker",`TICKER-${market}`);
-    }
-        
-    }, [market])
-
-    
-    // 
-
-    return <div>
-        <div className="flex items-center  flex-row relative w-[780px] overflow-hidden h-full border-slate-800">
-            <div className="flex items-center justify-between flex-row no-scrollbar overflow-auto pr-4">
-                    <Ticker market={market} TokenImage={tokenImage ?? ""} image={usdcImage ?? ""}/>
-                    <div className="flex items-center flex-row space-x-8 pl-4">
-                        <div className="flex flex-col h-full justify-center">
-                            <p className={`font-medium tabular-nums text-greenText text-md text-green-500`}>${ticker?.lastPrice}</p>
-                            <p className="font-medium   tabular-nums">${ticker?.lastPrice}</p>
-                        </div>
-                        <div className="flex flex-col">
-                            <p className={`font-medium text-xs text-slate-400`}>24H Change</p>
-                            <p className={`  font-medium tabular-nums leading-5  text-greenText ${Number(ticker?.priceChange) > 0 ? "text-green-500" : "text-red-500"}`}>{Number(ticker?.priceChange) > 0 ? "+" : ""} {ticker?.priceChange} {Number(ticker?.priceChangePercent)?.toFixed(2)}%</p></div><div className="flex flex-col">
-                                <p className="font-medium text-xs text-slate-400 ">24H High</p>
-                                <p className=" font-medium tabular-nums leading-5  ">{ticker?.high}</p>
-                                </div>
-                                <div className="flex flex-col">
-                                    <p className="font-medium text-xs text-slate-400 ">24H Low</p>
-                                    <p className=" font-medium tabular-nums leading-5 ">{ticker?.low}</p>
-                                </div>
-                            <button type="button" className="font-medium transition-opacity hover:opacity-80 hover:cursor-pointer text-base text-left" data-rac="">
-                                <div className="flex flex-col">
-                                    <p className="font-medium text-xs text-slate-400 ">24H Volume</p>
-                                    <p className="mt-1  font-medium tabular-nums leading-5  ">{ticker?.volume}
-                                </p>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="flex h-[64px] items-center gap-8 overflow-x-auto border-b border-zinc-800 bg-black px-4">
+      <Link
+        href="/market"
+        className="flex shrink-0 items-center gap-3 hover:opacity-80"
+      >
+        <TokenAvatar src={tokenImage} symbol={base} size={28} />
+        <div className="flex items-center gap-1.5 text-[15px] font-semibold tracking-tight">
+          {base} / {quote}
+          <ChevronDown className="size-3.5 text-zinc-500" />
         </div>
+      </Link>
 
-}
+      <div className="shrink-0">
+        <p
+          className={cn(
+            "font-mono text-lg leading-none font-semibold",
+            up ? "text-emerald-400" : "text-red-400"
+          )}
+        >
+          {last}
+        </p>
+      </div>
 
-function Ticker({market,TokenImage, image}: {market: string,TokenImage:string,image:string}) {
-    return <div className="flex h-[60px] shrink-0 space-x-4">
-        <div className="flex flex-row relative ml-2 -mr-4">
-             <Image
-          src={market === "TATA_INR" ? "/TATA.png" : TokenImage || "/sol copy.webp"}
-          alt="Market Logo"
-          loading="lazy"
-          decoding="async"
-          data-nimg="1"
-          width={30}
-          height={30}
-          className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-        />
-              <Image
-          src={image}
-          alt="Market Logo"
-          loading="lazy"
-          decoding="async"
-          data-nimg="1"
-          width={30}
-          height={30}
-          className="z-2 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-        />
-           
-        </div>
-    <button type="button" className="react-aria-Button" data-rac="">
-        <div className="flex items-center justify-between flex-row cursor-pointer rounded-lg p-3 hover:opacity-80">
-            <div className="flex items-center flex-row gap-2 undefined">
-                <div className="flex flex-row relative">
-                    <p className="font-medium text-sm undefined">{market.replace("_", " / ")}</p>
-                </div>
-            </div>
-        </div>
-    </button>
+      <Stat
+        label="24H CHANGE"
+        value={
+          ticker
+            ? `${Number(ticker.priceChange) > 0 ? "+" : ""}${Number(ticker.priceChange).toLocaleString()} (${formatPercent(change)})`
+            : "—"
+        }
+        className={up ? "text-emerald-400" : "text-red-400"}
+      />
+      <Stat label="24H HIGH" value={fmt(ticker?.high)} />
+      <Stat label="24H LOW" value={fmt(ticker?.low)} />
+      <Stat label="24H VOLUME" value={fmt(ticker?.volume)} />
     </div>
+  );
 }
 
+function fmt(value?: string) {
+  if (!value) return "—";
+  const n = Number(value);
+  if (!Number.isFinite(n)) return value;
+  return n.toLocaleString("en-US", { maximumFractionDigits: 2 });
+}
+
+function Stat({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
+  return (
+    <div className="shrink-0">
+      <p className="text-[10px] font-medium tracking-[0.12em] text-zinc-500">
+        {label}
+      </p>
+      <p className={cn("mt-0.5 font-mono text-[13px] text-zinc-200", className)}>
+        {value}
+      </p>
+    </div>
+  );
+}

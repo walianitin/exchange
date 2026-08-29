@@ -1,4 +1,5 @@
 import {
+  CandlestickSeries,
   ColorType,
   createChart as createLightWeightChart,
   CrosshairMode,
@@ -23,18 +24,23 @@ export class ChartManager {
     close: null,
   };
 
-
-
   constructor(
     ref: HTMLElement,
-    initialData: { timestamp: number; open: number; high: number; low: number; close: number; volume?: number }[],
+    initialData: {
+      timestamp: number;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+      volume?: number;
+    }[],
     layout: { background: string; color: string }
   ) {
     const chart = createLightWeightChart(ref, {
       autoSize: true,
       overlayPriceScales: {
         ticksVisible: true,
-        borderVisible: true,
+        borderVisible: false,
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -43,32 +49,31 @@ export class ChartManager {
         visible: true,
         ticksVisible: true,
         entireTextOnly: true,
+        borderVisible: false,
+      },
+      timeScale: {
+        borderVisible: false,
       },
       grid: {
-        horzLines: {
-          visible: false,
-        },
-        vertLines: {
-          visible: false,
-        },
+        horzLines: { color: "rgba(255,255,255,0.06)" },
+        vertLines: { color: "rgba(255,255,255,0.04)" },
       },
       layout: {
         background: {
           type: ColorType.Solid,
           color: layout.background,
         },
-        textColor: "white",
+        textColor: layout.color,
       },
     });
     this.chart = chart;
 
-    // @ts-expect-error - addCandlestickSeries method exists but type definition may be incomplete
-    this.candleSeries = chart.addCandlestickSeries({
-      upColor: '#02c176',
-      downColor: '#ff4747',
+    this.candleSeries = chart.addSeries(CandlestickSeries, {
+      upColor: "#22c55e",
+      downColor: "#ef4444",
       borderVisible: false,
-      wickUpColor: '#02c176',
-      wickDownColor: '#ef5350'
+      wickUpColor: "#22c55e",
+      wickDownColor: "#ef4444",
     });
 
     this.candleSeries.setData(
@@ -79,8 +84,14 @@ export class ChartManager {
     );
   }
 
-
-  public update(updatedPrice: { close: number; low: number; high: number; open: number; newCandleInitiated?: boolean; time?: number }) {
+  public update(updatedPrice: {
+    close: number;
+    low: number;
+    high: number;
+    open: number;
+    newCandleInitiated?: boolean;
+    time?: number;
+  }) {
     if (!this.lastUpdateTime) {
       this.lastUpdateTime = new Date().getTime();
     }
@@ -97,8 +108,6 @@ export class ChartManager {
       this.lastUpdateTime = updatedPrice.time;
     }
   }
-
-
 
   public destroy() {
     this.chart.remove();

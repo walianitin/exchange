@@ -1,159 +1,229 @@
 "use client";
-import { useState,useEffect } from "react";
-import Image from "next/image"
-import { getAllInfo } from "@/app/utils/httpClient";
 
-interface CoinData {
-  symbol: string;
-  image: string;
-}
+import { useEffect, useState } from "react";
 
-export function SwapUI({ market }: {market: string}) {
-    const [amount, setAmount] = useState('');
-    const [activeTab, setActiveTab] = useState('buy');
-    const [type, setType] = useState('limit');
-    const [quantity,setquantity]=useState('');
-  const[usdcImage,setimage]=useState("");
-      useEffect(() => {
-        //fetch the Image from getAllInfo
-        async function fetchImage() {
-          const data: CoinData[] = await getAllInfo();
-           const image= data.find((d: CoinData) => d.symbol.toUpperCase() === market.split('_')[0] )?.image
-                console.log(image)
-                setimage(image || "")
+import { getTicker } from "@/app/utils/httpClient";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  useWallet,
+  type OrderSide,
+  type OrderType,
+} from "@/components/wallet-provider";
+import { formatQty } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+export function SwapUI({ market }: { market: string }) {
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [side, setSide] = useState<OrderSide>("buy");
+  const [type, setType] = useState<OrderType>("limit");
+  const [lastPrice, setLastPrice] = useState(0);
+  const [postOnly, setPostOnly] = useState(false);
+  const [ioc, setIoc] = useState(false);
+  const { balances, placeOrder } = useWallet();
+
+  const [base, quote] = market.split("_");
+  const quoteBal = balances[quote] ?? 0;
+  const baseBal = balances[base] ?? 0;
+
+  useEffect(() => {
+    getTicker(market)
+      .then((ticker) => {
+        const live = Number(ticker?.lastPrice ?? 0);
+        if (live) {
+          setLastPrice(live);
+          setPrice(String(live));
         }
-        fetchImage();
-      }, [market]);
+      })
+      .catch(() => undefined);
+  }, [market]);
 
-    return <div>
-        <div className="flex flex-col font-normal justify-between">
-            <div className="flex flex-row h-full justify-between p-5">
-                <BuyButton activeTab={activeTab} setActiveTab={setActiveTab} />
-                <SellButton activeTab={activeTab} setActiveTab={setActiveTab} />
-            </div>
-            <div className="flex flex-col gap-1">
-                <div className="px-3">
-                    <div className="flex flex-row flex-0 gap-5 undefined">
-                        <LimitButton type={type} setType={setType} />
-                        <MarketButton type={type} setType={setType} />                       
-                    </div>
-                </div>
-                <div className="flex flex-col px-3">
-                    <div className="flex flex-col flex-1 gap-3 text-baseTextHighEmphasis">
-                        <div className="flex flex-col gap-3">
-                            <div className="flex items-center justify-between flex-row">
-                                <p className="text-xs font-normal text-baseTextMedEmphasis">Available Balance</p>
-                                <p className="font-medium text-xs text-baseTextHighEmphasis">36.94 USDC</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <p className="text-xs font-normal text-baseTextMedEmphasis">
-                                Price
-                            </p>
-                            <div className="flex flex-col relative">
+  const effectivePrice =
+    type === "market" ? lastPrice || Number(price) : Number(price);
+  const total = (Number(quantity) || 0) * (effectivePrice || 0);
+  const canSubmit = Number(quantity) > 0 && effectivePrice > 0;
 
-                                <input step="0.01" placeholder="0" className="h-12  text-black  bg-neutral-700 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-1xl leading-9  placeholder-baseTextMedEmphasis ring-0 transition focus:border-accentBlue focus:ring-0 border-neutral-700 " type="text" value={amount} onChange={e=>{
-                                    setAmount(e.target.value)
-                                }} />
+  function applyPercent(pct: number) {
+    if (side === "buy") {
+      const spend = quoteBal * (pct / 100);
+      const px = effectivePrice || lastPrice;
+      if (!px) return;
+      setQuantity((spend / px).toFixed(6));
+      if (type === "limit" && !price) setPrice(String(px));
+    } else {
+      setQuantity(((baseBal * pct) / 100).toFixed(6));
+    }
+  }
 
-                                <div className="flex flex-row absolute right-1 top-1 p-2">
-                                    <div className="relative">
-                                               <Image
-                                                 src={usdcImage as string }
-                                                 alt="Market Logo"
-                                                 loading="lazy"
-                                                 decoding="async"
-                                                 data-nimg="1"
-                                                 width={30}
-                                                 height={30}
-                                                 className="z-22 rounded-full h-6 mb-2 outline-baseBackgroundL1"
-                                               />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <p className="text-xs font-normal text-baseTextMedEmphasis">
-                            Quantity
-                        </p>
-                        <div className="flex flex-col relative">
-                            <input step="0.01" placeholder="0"  className="h-12  text-black bg-neutral-700 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-1xl leading-9 text-[$text] placeholder-baseTextMedEmphasis ring-0 transition focus:border-accentBlue focus:ring-0 border-neutral-700 " type="text" value={quantity} onChange={e=>{
-                                setquantity(e.target.value);
-                            }} />
-                            <div className="flex flex-row absolute right-1 top-1 p-2">
-                                <div className="relative">
-                                    /
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex justify-end flex-row">
-                            <p className="font-medium pr-2 text-xs text-baseTextMedEmphasis">≈ 0.00 USDC</p>
-                        </div>
-                        <div className="flex justify-center flex-row mt-2 gap-3">
-                            <div className="flex items-center justify-center flex-row rounded-full px-[16px] py-[6px] text-xs cursor-pointer bg-baseBackgroundL2 hover:bg-baseBackgroundL3">
-                                25%
-                            </div>
-                            <div className="flex items-center justify-center flex-row rounded-full px-[16px] py-[6px] text-xs cursor-pointer bg-baseBackgroundL2 hover:bg-baseBackgroundL3">
-                                50%
-                            </div>
-                            <div className="flex items-center justify-center flex-row rounded-full px-[16px] py-[6px] text-xs cursor-pointer bg-baseBackgroundL2 hover:bg-baseBackgroundL3">
-                                75%
-                            </div>
-                            <div className="flex items-center justify-center flex-row rounded-full px-[16px] py-[6px] text-xs cursor-pointer bg-baseBackgroundL2 hover:bg-baseBackgroundL3">
-                                Max
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" className="font-semibold  focus:ring-blue-800  hover:text-blue-400  focus:none focus:outline-none text-center h-12 rounded-xl text-base px-4 py-2 my-4 bg-blue-300 bg-greenPrimaryButtonBackground text-greenPrimaryButtonText active:scale-98" onClick={()=>{
-                        alert("Thank you for buying");
-                    }}>Buy</button>
-                    <div className="flex justify-between flex-row mt-1">
-                        <div className="flex flex-row gap-2">
-                            <div className="flex items-center">
-                                <input className="form-checkbox rounded-2xl border border-solid border-baseBorderMed bg-base-950 font-light text-transparent shadow-none shadow-transparent outline-none ring-0 ring-transparent checked:border-baseBorderMed checked:bg-base-900 checked:hover:border-baseBorderMed  focus:bg-base-900 focus:ring-0 focus:ring-offset-0 focus:checked:border-baseBorderMed cursor-pointer h-5 w-5" id="postOnly" type="checkbox" data-rac=""  />
-                                <label className="ml-2 text-xs">Post Only</label>
-                            </div>
-                            <div className="flex items-center">
-                                <input className="form-checkbox rounded border border-solid border-baseBorderMed bg-base-950 font-light text-transparent shadow-none shadow-transparent outline-none ring-0 ring-transparent checked:border-baseBorderMed checked:bg-base-900 checked:hover:border-baseBorderMed focus:bg-base-900 focus:ring-0 focus:ring-offset-0 focus:checked:border-baseBorderMed cursor-pointer h-5 w-5" id="ioc" type="checkbox" data-rac="" />
-                                <label className="ml-2 text-xs">IOC</label>
-                            </div>
-                        </div>
-                </div>
-            </div>
+  function submit() {
+    const px = type === "market" ? lastPrice || Number(price) : Number(price);
+    const ok = placeOrder({
+      market,
+      side,
+      type: ioc ? "market" : type,
+      price: px,
+      quantity: Number(quantity),
+    });
+    if (ok) setQuantity("");
+  }
+
+  return (
+    <div className="flex h-full flex-col bg-black p-4">
+      <div className="grid grid-cols-2 overflow-hidden rounded-lg bg-zinc-950">
+        <button
+          type="button"
+          onClick={() => setSide("buy")}
+          className={cn(
+            "h-10 text-sm font-medium",
+            side === "buy"
+              ? "bg-[#0d3d2e] text-emerald-400"
+              : "text-zinc-500 hover:text-zinc-300"
+          )}
+        >
+          Buy
+        </button>
+        <button
+          type="button"
+          onClick={() => setSide("sell")}
+          className={cn(
+            "h-10 text-sm font-medium",
+            side === "sell"
+              ? "bg-[#3d151c] text-red-400"
+              : "text-zinc-500 hover:text-zinc-300"
+          )}
+        >
+          Sell
+        </button>
+      </div>
+
+      <div className="mt-4 inline-flex w-fit rounded-full bg-zinc-950 p-0.5">
+        {(["limit", "market"] as const).map((item) => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => setType(item)}
+            className={cn(
+              "rounded-full px-3 py-1 text-xs font-medium capitalize",
+              type === item ? "bg-zinc-800 text-white" : "text-zinc-500"
+            )}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-5">
+        <p className="text-[10px] font-medium tracking-[0.14em] text-zinc-500">
+          AVAILABLE BALANCE
+        </p>
+        <div className="mt-2 space-y-1.5 font-mono text-[13px]">
+          <div className="flex justify-between">
+            <span className="text-zinc-500">{quote}</span>
+            <span>{formatQty(quoteBal)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-zinc-500">{base}</span>
+            <span>{formatQty(baseBal)}</span>
+          </div>
         </div>
-    </div>
-</div>
-}
+      </div>
 
-function LimitButton({ type, setType }: { type: string, setType: (type: string) => void }) {
-    return <div className="flex flex-col cursor-pointer justify-center py-2 mt-2" onClick={() => setType('limit')}>
-    <div className={`text-sm font-medium py-1 border-b-2 ${type === 'limit' ? "border-accentBlue text-baseTextHighEmphasis" : "border-transparent text-baseTextMedEmphasis hover:border-baseTextHighEmphasis hover:text-baseTextHighEmphasis"}`}>
-        Limit
-    </div>
-</div>
-}
+      {type === "limit" && (
+        <div className="mt-4 grid gap-1.5">
+          <Label className="text-xs text-zinc-500">Price</Label>
+          <div className="relative">
+            <Input
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="h-11 border-zinc-800 bg-zinc-950 pr-14 font-mono"
+            />
+            <span className="absolute top-3 right-3 text-xs text-zinc-500">
+              {quote}
+            </span>
+          </div>
+        </div>
+      )}
 
-function MarketButton({ type, setType }: { type: string, setType: (type: string) => void }) {
-    return  <div className="flex flex-col cursor-pointer justify-center py-2 mt-2 " onClick={() => setType('market')}>
-    <div className={`text-sm font-medium py-1 border-b-2 ${type === 'market' ? "border-accentBlue text-baseTextHighEmphasis" : "border-b-2 border-transparent text-baseTextMedEmphasis hover:border-baseTextHighEmphasis hover:text-baseTextHighEmphasis"} `}>
-        Market
-    </div>
-    </div>
-}
+      <div className="mt-3 grid gap-1.5">
+        <Label className="text-xs text-zinc-500">Quantity</Label>
+        <div className="relative">
+          <Input
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            placeholder="0"
+            className="h-11 border-zinc-800 bg-zinc-950 pr-14 font-mono"
+          />
+          <span className="absolute top-3 right-3 text-xs text-zinc-500">
+            {base}
+          </span>
+        </div>
+      </div>
 
-function BuyButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
-    return <div className={`flex flex-col mb-[-2px] flex-1 cursor-pointer justify-center border-b-2 p-4 mr-2 ml-2 hover:text-green-600 rounded-2xl ${activeTab === 'buy' ? 'bg-green-200 text-green-500 ' :'border-b-baseBorderMed hover:border-b-baseBorderFocus'}`} onClick={() => setActiveTab('buy')}>
-        <p className="text-center text-sm font-semibold text-greenText">
-            Buy
-        </p>
-    </div>
-}
+      <div className="mt-3 grid grid-cols-4 gap-1.5">
+        {[25, 50, 75, 100].map((pct) => (
+          <button
+            key={pct}
+            type="button"
+            onClick={() => applyPercent(pct)}
+            className="h-8 rounded-md bg-zinc-950 text-[11px] text-zinc-400 hover:bg-zinc-900 hover:text-white"
+          >
+            {pct === 100 ? "Max" : `${pct}%`}
+          </button>
+        ))}
+      </div>
 
-function SellButton({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
-    return <div className={`flex  flex-col  rounded-2xl mb-[-2px] flex-1 hover:text-red-600 cursor-pointer justify-center border-b-2 p-4 ${activeTab === 'sell' ? 'bg-red-300 bg-redBackgroundTransparent' : 'border-b-baseBorderMed hover:border-b-baseBorderFocus'}`} onClick={() => setActiveTab('sell')}>
-        <p className="text-center text-sm   font-semibold text-redText">
-            Sell
-        </p>
+      <div className="mt-3 grid gap-1.5">
+        <Label className="text-xs text-zinc-500">Order value</Label>
+        <div className="relative">
+          <Input
+            readOnly
+            value={total ? total.toFixed(2) : ""}
+            placeholder="0.00"
+            className="h-11 border-zinc-800 bg-zinc-950 pr-14 font-mono"
+          />
+          <span className="absolute top-3 right-3 text-xs text-zinc-500">
+            {quote}
+          </span>
+        </div>
+      </div>
+
+      <Button
+        disabled={!canSubmit}
+        className={cn(
+          "mt-5 h-11 rounded-lg text-sm font-medium",
+          canSubmit
+            ? side === "buy"
+              ? "bg-emerald-600 text-white hover:bg-emerald-500"
+              : "bg-red-600 text-white hover:bg-red-500"
+            : "bg-zinc-900 text-zinc-500 hover:bg-zinc-900"
+        )}
+        onClick={submit}
+      >
+        Place {side} order
+      </Button>
+
+      <div className="mt-4 flex gap-4">
+        <label className="flex items-center gap-2 text-xs text-zinc-500">
+          <input
+            type="checkbox"
+            checked={postOnly}
+            onChange={(e) => setPostOnly(e.target.checked)}
+            className="size-3.5 rounded border-zinc-700 bg-transparent"
+          />
+          Post only
+        </label>
+        <label className="flex items-center gap-2 text-xs text-zinc-500">
+          <input
+            type="checkbox"
+            checked={ioc}
+            onChange={(e) => setIoc(e.target.checked)}
+            className="size-3.5 rounded border-zinc-700 bg-transparent"
+          />
+          IOC
+        </label>
+      </div>
     </div>
+  );
 }

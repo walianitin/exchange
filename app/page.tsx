@@ -1,15 +1,11 @@
 "use client";
 
+import { MarketsOverview } from "@/components/markets/overview";
 
-import Landing from "@/components/ui/Landing";
 export default function Home() {
-  
   return (
-            <>
-            <div className=" min-h-screen max-w-full bg-neutral-900">     
-            <Landing></Landing>
-              </div>
-            </>
-  
+    <div className="mx-auto max-w-7xl px-4 py-6 lg:max-w-[1400px]">
+      <MarketsOverview />
+    </div>
   );
 }
