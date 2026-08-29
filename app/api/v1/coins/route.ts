@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { COINS_INDEXER_URL } from "@/app/utils/httpClient";
+import { COINS_INDEXER_URL } from "@/app/utils/coins-url";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET() {
   try {
@@ -9,8 +12,7 @@ export async function GET() {
     }
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
-    console.error("Failed to fetch coins:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch coins" },
       { status: 500 }

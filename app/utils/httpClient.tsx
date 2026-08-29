@@ -1,10 +1,8 @@
 import axios from "axios";
 import { Ticker, KLine, marketData } from "./types";
+import { COINS_INDEXER_URL } from "./coins-url";
 
 const BASE_URL = "/api/v1";
-
-export const COINS_INDEXER_URL =
-  "https://price-indexer.workers.madlads.com/?ids=solana,usd-coin,pyth-network,jito-governance-token,tether,bonk,helium,helium-mobile,bitcoin,ethereum,dogwifcoin,jupiter-exchange-solana,parcl,render-token,tensor,wormhole,wen-4,cat-in-a-dogs-world,book-of-meme,raydium,hivemapper,kamino,drift-protocol,nyan,jeo-boden,habibi-sol,io,zeta,mother-iggy,sanctum-2,moo-deng,debridge,shuffle-2,pepe,shiba-inu,chainlink,uniswap,ondo-finance,holograph,starknet,matic-network,mon-protocol,blur,worldcoin-wld,polyhedra-network,unagi-token,layerzero,aave,lido-dao,matr1x,polygon-ecosystem-token";
 
 export async function getDepth(market: string) {
   const response = await axios.get(`${BASE_URL}/depth`, {
